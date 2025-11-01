@@ -1,4 +1,4 @@
 
-api_key="sk-f886f7ab808a49b091b1f4e8b47f9f7a"
+api_key="sk-8568cdc640424fed9e65a6df9424ff22"
 base_url="https://api.deepseek.com"
 
