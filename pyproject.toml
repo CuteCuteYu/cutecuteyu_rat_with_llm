@@ -1,0 +1,18 @@
+[project]
+name = "rat-with-llm"
+version = "0.1.0"
+description = "TCP-based remote command execution system"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "openai>=2.2.0",
+    "pyreadline3>=3.4.1",
+]
+
+[project.scripts]
+server = "main:main"
+client = "client:main"
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
