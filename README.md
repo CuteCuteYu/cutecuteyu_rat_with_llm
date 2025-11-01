@@ -38,18 +38,20 @@ CuteCuteyu-RAT is a powerful TCP remote command execution system that integrates
 
 ```
 rat_with_llm/
-├── server.py              # Main server application
-├── client.py              # Client application
-├── terminal.py            # Terminal interface and command processing
-├── tab_completer.py       # Tab auto-completion functionality
-├── llm_info.py            # LLM API configuration
-├── listener.py            # Listener management
-├── session.py             # Session management
-├── command.md             # Complete command documentation (English)
-├── README.md              # Project documentation (English)
-├── command-zh-cn.md       # Complete command documentation (Chinese)
-├── README-zh-cn.md        # Project documentation (Chinese)
-└── requirements.txt       # Python dependencies
+├── main.py               # Main server application entry point
+├── client.py             # Client application
+├── terminal.py           # Terminal interface and command processing
+├── tab_completer.py      # Tab auto-completion functionality
+├── llm_info.py           # LLM API configuration
+├── ps.py                 # PowerShell code generation
+├── session.py            # Session management
+├── pyproject.toml        # Project configuration and dependencies
+├── uv.lock               # uv dependency lock file
+├── command.md            # Complete command documentation (English)
+├── README.md             # Project documentation (English)
+├── command-zh-cn.md      # Complete command documentation (Chinese)
+├── README-zh-cn.md       # Project documentation (Chinese)
+└── .gitignore            # Git ignore file
 ```
 
 ## Installation and Running
@@ -70,7 +72,7 @@ pip install uv
 uv sync
 
 # Run the server
-python -m rat_with_llm.server
+uv run python main.py
 ```
 
 #### Method 2: Using pip
@@ -79,14 +81,14 @@ python -m rat_with_llm.server
 pip install -r requirements.txt
 
 # Run the server
-python -m rat_with_llm.server
+python main.py
 ```
 
 ### Running the System
 
 1. **Start the Server**:
    ```bash
-   python -m rat_with_llm.server
+   python main.py
    ```
 
 2. **Configure Listeners**:
@@ -96,7 +98,7 @@ python -m rat_with_llm.server
 
 3. **Client Connection**:
    ```bash
-   python -m rat_with_llm.client <server_ip> <server_port>
+   python client.py <server_ip> <server_port>
    ```
 
 ## Usage Instructions

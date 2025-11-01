@@ -28,14 +28,15 @@
 
 ```
 rat_with_llm/
-├── main.py              # 主程序入口
-├── terminal.py          # 终端交互主类
+├── main.py              # 主程序入口（服务端）
 ├── client.py            # TCP客户端实现
-├── session.py           # 会话管理类
+├── terminal.py          # 终端交互主类
 ├── tab_completer.py     # Tab键自动补全
 ├── llm_info.py          # LLM API配置
 ├── ps.py                # PowerShell代码生成
+├── session.py           # 会话管理类
 ├── pyproject.toml       # 项目配置和依赖
+├── uv.lock              # uv依赖锁文件
 ├── command-zh-cn.md     # 详细命令文档（中文）
 ├── README-zh-cn.md      # 项目说明文档（中文）
 ├── command.md           # 详细命令文档（英文）
