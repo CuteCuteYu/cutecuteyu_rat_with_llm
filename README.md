@@ -3,6 +3,7 @@
 ## Language Versions
 
 This documentation is available in multiple languages:
+
 - **English**: [README.md](README.md) | [Command Documentation](command.md)
 - **中文 (Chinese)**: [README-zh-cn.md](README-zh-cn.md) | [命令文档](command-zh-cn.md)
 
@@ -14,11 +15,10 @@ CuteCuteyu-RAT is a powerful TCP remote command execution system that integrates
 
 ![](mytest.gif)
 
-
-
 ## Core Features
 
 ### Basic Functionality
+
 - **TCP Communication**: Reliable TCP-based client-server communication
 - **Remote Command Execution**: Execute arbitrary system commands on target machines
 - **Multi-session Management**: Support for multiple concurrent sessions
@@ -26,6 +26,7 @@ CuteCuteyu-RAT is a powerful TCP remote command execution system that integrates
 - **Real-time Interaction**: Interactive terminal with real-time command execution
 
 ### Advanced Features
+
 - **LLM Integration**: DeepSeek AI-powered intelligent command generation
 - **Interactive Terminal**: User-friendly command-line interface
 - **Tab Auto-completion**: Intelligent command and parameter completion
@@ -33,6 +34,7 @@ CuteCuteyu-RAT is a powerful TCP remote command execution system that integrates
 - **Multi-listener Support**: Concurrent operation of multiple listeners
 
 ### Security Features
+
 - **Connection Monitoring**: Real-time connection status tracking
 - **Session Isolation**: Independent session management
 - **Resource Cleanup**: Automatic cleanup of resources upon disconnection
@@ -42,25 +44,41 @@ CuteCuteyu-RAT is a powerful TCP remote command execution system that integrates
 
 ```
 rat_with_llm/
-├── main.py               # Main server application entry point
-├── client.py             # Client application
-├── terminal.py           # Terminal interface and command processing
-├── tab_completer.py      # Tab auto-completion functionality
+├── .gitignore
+├── .python-version
+├── LICENSE
+├── README-zh-cn.md
+├── README.md
+├── client/
+│   └── client.py         # Client application
+├── command-zh-cn.md
+├── command.md
+├── fileserver/
+│   └── escalation/       # Privilege escalation files
+│       ├── README.md
+│       ├── client.exe
+│       ├── compile_dll.bat
+│       ├── compile_test.bat
+│       ├── main.cpp
+│       ├── privilege_escalation.dll
+│       ├── test_dll.cpp
+│       └── test_dll.exe
 ├── llm_info.py           # LLM API configuration
+├── main.py               # Main server application entry point
+├── mytest.gif
 ├── ps.py                 # PowerShell code generation
-├── session.py            # Session management
 ├── pyproject.toml        # Project configuration and dependencies
+├── session.py            # Session management
+├── tab_completer.py      # Tab auto-completion functionality
+├── terminal.py           # Terminal interface and command processing
 ├── uv.lock               # uv dependency lock file
-├── command.md            # Complete command documentation (English)
-├── README.md             # Project documentation (English)
-├── command-zh-cn.md      # Complete command documentation (Chinese)
-├── README-zh-cn.md       # Project documentation (Chinese)
-└── .gitignore            # Git ignore file
+└── webserver.py          # Web server functionality
 ```
 
 ## Installation and Running
 
 ### Prerequisites
+
 - Python 3.8 or higher
 - Windows 10/11 or Windows Server 2016+
 - Internet connection (for LLM functionality)
@@ -68,6 +86,7 @@ rat_with_llm/
 ### Installation Methods
 
 #### Method 1: Using uv (Recommended)
+
 ```bash
 # Install uv if not already installed
 pip install uv
@@ -80,6 +99,7 @@ uv run python main.py
 ```
 
 #### Method 2: Using pip
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -91,16 +111,17 @@ python main.py
 ### Running the System
 
 1. **Start the Server**:
+
    ```bash
    python main.py
    ```
-
 2. **Configure Listeners**:
+
    - Use the `listen` command to start TCP listeners
    - Default configuration: localhost:8888
    - Support for multiple listeners on different ports
-
 3. **Client Connection**:
+
    ```bash
    python client.py <server_ip> <server_port>
    ```
@@ -120,28 +141,32 @@ python main.py
 The system includes built-in web server functionality for file download services, particularly useful for privilege escalation operations:
 
 1. **Start Web Server**
+
    ```bash
    rat> webserver
    ```
+
    - Default port: 8000
    - Default directory: `fileserver/`
    - Automatically assigns Web Server ID
-
 2. **View Running Web Servers**
+
    ```bash
    rat> webservers
    ```
+
    - Displays all running web servers
    - Includes ID, port, and service directory information
-
 3. **Stop Web Server**
+
    ```bash
    rat> webserver -k 1
    ```
+
    - Stops the web server with specified ID
    - Supports Tab key auto-completion for Web Server ID
-
 4. **Web Server Usage**
+
    - Provides file download services for clients
    - Supports privilege escalation file distribution
    - Supports custom directories and ports
@@ -151,24 +176,26 @@ The system includes built-in web server functionality for file download services
 The system supports privilege escalation functionality through the `getsystem` command:
 
 1. **Start File Server**
-   ```bash
-   python -m rat_with_llm.webserver
-   ```
-   This starts an HTTP file server that provides the necessary files for privilege escalation.
 
+   ```bash
+   rat> webserver
+   ```
+
+   This starts an HTTP file server that provides the necessary files for privilege escalation.
 2. **Run Client as Administrator**
    Run the client program with administrator privileges:
-   ```bash
-   python -m rat_with_llm.client
-   ```
 
+   ```bash
+   uv run client.py
+   ```
 3. **Execute Privilege Escalation Command**
    Enter the `getsystem` command in the session interface:
+
    ```bash
    session 1> getsystem
    ```
-
 4. **Automatic Privilege Escalation Process**
+
    - Client automatically downloads privilege escalation files from the file server
    - After download completion, automatically executes the privilege escalation program
    - Client automatically disconnects after privilege escalation is completed
@@ -178,13 +205,16 @@ The system supports privilege escalation functionality through the `getsystem` c
 ### Configuration Options
 
 #### Server Configuration
+
 - **Default Port**: 8888
 - **Host Binding**: localhost or 0.0.0.0 for all interfaces
 - **Session Timeout**: 5 seconds
 - **Max Connections**: Configurable based on system resources
 
 #### LLM Configuration
+
 Configure API settings in `llm_info.py`:
+
 - API endpoint
 - Authentication credentials
 - Request timeout settings
@@ -192,12 +222,14 @@ Configure API settings in `llm_info.py`:
 ## Security Considerations
 
 ### Important Warnings
+
 - ⚠️ **This system allows remote execution of arbitrary system commands**
 - ⚠️ **Use only in controlled and trusted environments**
 - ⚠️ **Ensure proper network isolation and access controls**
 - ⚠️ **Monitor system activity and maintain audit logs**
 
 ### Security Best Practices
+
 1. **Network Isolation**: Deploy in isolated network segments
 2. **Access Control**: Implement strict access controls
 3. **Monitoring**: Maintain comprehensive activity logs
@@ -206,12 +238,14 @@ Configure API settings in `llm_info.py`:
 ## Technical Implementation
 
 ### Architecture Overview
+
 - **Client-Server Model**: TCP-based communication architecture
 - **Multi-threading**: Concurrent session and listener management
 - **Modular Design**: Separated functionality for maintainability
 - **Error Resilience**: Robust error handling and recovery
 
 ### Key Components
+
 - **Server Module**: Main application entry point and coordination
 - **Client Module**: Target system connection and command execution
 - **Terminal Interface**: User interaction and command processing
@@ -220,10 +254,12 @@ Configure API settings in `llm_info.py`:
 ## Dependencies
 
 ### Core Dependencies
+
 - **Python Standard Library**: sockets, threading, subprocess, etc.
 - **External Libraries**: LLM API client libraries
 
 ### Optional Dependencies
+
 - Development tools for testing and debugging
 - Network monitoring tools for deployment
 

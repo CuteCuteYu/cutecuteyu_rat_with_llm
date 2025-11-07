@@ -33,20 +33,35 @@
 
 ```
 rat_with_llm/
-├── main.py              # 主程序入口（服务端）
-├── client.py            # TCP客户端实现
-├── terminal.py          # 终端交互主类
-├── tab_completer.py     # Tab键自动补全
+├── .gitignore
+├── .python-version
+├── LICENSE
+├── README-zh-cn.md
+├── README.md
+├── client/
+│   └── client.py        # TCP客户端实现
+├── command-zh-cn.md
+├── command.md
+├── fileserver/
+│   └── escalation/      # 特权提升文件
+│       ├── README.md
+│       ├── client.exe
+│       ├── compile_dll.bat
+│       ├── compile_test.bat
+│       ├── main.cpp
+│       ├── privilege_escalation.dll
+│       ├── test_dll.cpp
+│       └── test_dll.exe
 ├── llm_info.py          # LLM API配置
+├── main.py              # 主程序入口（服务端）
+├── mytest.gif
 ├── ps.py                # PowerShell代码生成
-├── session.py           # 会话管理类
 ├── pyproject.toml       # 项目配置和依赖
+├── session.py           # 会话管理类
+├── tab_completer.py     # Tab键自动补全
+├── terminal.py          # 终端交互主类
 ├── uv.lock              # uv依赖锁文件
-├── command-zh-cn.md     # 详细命令文档（中文）
-├── README-zh-cn.md      # 项目说明文档（中文）
-├── command.md           # 详细命令文档（英文）
-├── README.md            # 项目说明文档（英文）
-└── .gitignore           # Git忽略文件
+└── webserver.py         # Web服务器功能
 ```
 
 ## 安装和运行
