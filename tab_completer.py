@@ -13,7 +13,7 @@ class TabCompleter:
     def __init__(self):
         # 主界面命令列表
         self.main_commands = [
-            'listen', 'sessions', 'session', 'jobs', 'stop', 'help', 'exit'
+            'listen', 'sessions', 'session', 'jobs', 'webserver', 'webservers', 'stop', 'help', 'exit'
         ]
         
         # 会话界面命令列表
@@ -26,6 +26,9 @@ class TabCompleter:
         
         # jobs命令参数补全
         self.jobs_params = ['-k']
+        
+        # webserver命令参数补全
+        self.webserver_params = ['-k']
         
     def get_completions(self, text, state, current_state, terminal_instance=None):
         """获取补全选项"""
@@ -81,6 +84,23 @@ class TabCompleter:
                     listener_ids = [str(lid) for lid in range(1, 10)]  # 备用方案
                 
                 matches = [f"jobs -k {lid}" for lid in listener_ids if str(lid).startswith(partial_id)]
+        
+        # 处理webserver命令的参数补全
+        elif text.startswith('webserver ') and current_state == SessionState.MAIN:
+            parts = text.split()
+            if len(parts) == 2:
+                # 补全webserver参数
+                partial_param = parts[1]
+                matches = [f"webserver {param}" for param in self.webserver_params if param.startswith(partial_param)]
+            elif len(parts) == 3 and parts[1] == '-k':
+                # 补全Web服务器ID
+                partial_id = parts[2]
+                if terminal_instance and hasattr(terminal_instance, 'webserver_manager'):
+                    webserver_ids = [str(wid) for wid in terminal_instance.webserver_manager.get_running_webservers()]
+                else:
+                    webserver_ids = [str(wid) for wid in range(1, 10)]  # 备用方案
+                
+                matches = [f"webserver -k {wid}" for wid in webserver_ids if str(wid).startswith(partial_id)]
         
         # 返回匹配的补全选项
         if state < len(matches):

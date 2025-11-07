@@ -115,6 +115,66 @@ python main.py
 4. **Execute commands** on target systems
 5. **Use AI features** for intelligent command generation
 
+### Web Server Management
+
+The system includes built-in web server functionality for file download services, particularly useful for privilege escalation operations:
+
+1. **Start Web Server**
+   ```bash
+   rat> webserver
+   ```
+   - Default port: 8000
+   - Default directory: `fileserver/`
+   - Automatically assigns Web Server ID
+
+2. **View Running Web Servers**
+   ```bash
+   rat> webservers
+   ```
+   - Displays all running web servers
+   - Includes ID, port, and service directory information
+
+3. **Stop Web Server**
+   ```bash
+   rat> webserver -k 1
+   ```
+   - Stops the web server with specified ID
+   - Supports Tab key auto-completion for Web Server ID
+
+4. **Web Server Usage**
+   - Provides file download services for clients
+   - Supports privilege escalation file distribution
+   - Supports custom directories and ports
+
+### Privilege Escalation Process
+
+The system supports privilege escalation functionality through the `getsystem` command:
+
+1. **Start File Server**
+   ```bash
+   python -m rat_with_llm.webserver
+   ```
+   This starts an HTTP file server that provides the necessary files for privilege escalation.
+
+2. **Run Client as Administrator**
+   Run the client program with administrator privileges:
+   ```bash
+   python -m rat_with_llm.client
+   ```
+
+3. **Execute Privilege Escalation Command**
+   Enter the `getsystem` command in the session interface:
+   ```bash
+   session 1> getsystem
+   ```
+
+4. **Automatic Privilege Escalation Process**
+   - Client automatically downloads privilege escalation files from the file server
+   - After download completion, automatically executes the privilege escalation program
+   - Client automatically disconnects after privilege escalation is completed
+
+**Note**: Privilege escalation requires running the client with administrator privileges and the file server must be running normally.
+
 ### Configuration Options
 
 #### Server Configuration

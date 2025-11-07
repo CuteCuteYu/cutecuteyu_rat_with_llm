@@ -127,6 +127,8 @@ ID      Host            Port    Status    Start Time
 - Stopped listeners are automatically removed from the list
 - Listener IDs are assigned sequentially starting from 1
 
+
+
 ### jobs -k
 
 **Function**: Stop a specific listener
@@ -283,6 +285,33 @@ Exit code: 0
 - Automatically executes generated code and returns results
 - Supports complex system management, file operations, network configuration tasks
 - Generated code is saved to temporary files and automatically deleted after execution
+
+### getsystem
+
+**Function**: Execute privilege escalation operation
+**Syntax**: `getsystem`
+
+**Examples**:
+
+```bash
+session 1> getsystem
+[+] Privilege escalation in progress...
+```
+
+**Description**:
+
+- Privilege escalation requires running the client with administrator privileges
+- File server must be started before execution: `python -m rat_with_llm.webserver`
+- Client automatically downloads privilege escalation files from the file server
+- After download completion, automatically executes the privilege escalation program
+- Client automatically disconnects after privilege escalation is completed
+- The entire process runs in a background thread and does not block the main thread
+
+**File Download Details**:
+- Download port: 8000
+- Download path: `http://{server_address}:8000/escalation/`
+- Download files: `privilege_escalation.dll` and `test_dll.exe`
+- Uses PowerShell's Invoke-WebRequest for file download
 
 ### Any System Command
 

